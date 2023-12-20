@@ -1,7 +1,8 @@
 "use client";
 import { updatePassword } from "@/app/action";
 import useResponse from "@/hooks/useResponse";
-import { Label, TextInput } from "keep-react";
+import InputField from "../InputField";
+import LabelField from "../LabelField";
 import SubmitButton from "../SubmitButton";
 const UpdatePasswordForm = () => {
   // const [state, dispatch] = useFormState(updatePassword, null);
@@ -12,27 +13,27 @@ const UpdatePasswordForm = () => {
         <h2 className="mb-2">Update your password</h2>
       </div>
       <div className="mb-4 col-12 md:col-6">
-        <Label value="Password" htmlFor="current_password" />
-        <TextInput
-          id="password"
+        <LabelField label="Current Password" htmlFor="current_password" />
+        <InputField
+          id="current_password"
+          placeholder="Current Password"
           color="gray"
-          name="current_password"
           type="password"
-          placeholder="Enter your current password"
+          name="current_password"
           required
         />
       </div>
       <div className="mb-4 col-12 md:col-6">
-        <Label value="New Password" htmlFor="new_password" />
-        <TextInput
-          id="new_password"
-          placeholder="New Password"
-          color="gray"
+        <LabelField label="Password" htmlFor="password" />
+        <InputField
+          id="password"
+          placeholder="Password"
           type="password"
           name="password"
           required
         />
       </div>
+
       <div className="col-12 mt-4">
         <SubmitButton
           label="Save Update"

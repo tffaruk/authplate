@@ -1,8 +1,8 @@
-import AvatarComponent from "@/components/Avatar";
 import React from "react";
 import Sidebar from "./Sidebar";
 interface User {
-  name: string;
+  first_name: string;
+  last_name: string;
   email: string;
 }
 
@@ -23,8 +23,10 @@ const SidebarContainer = async ({
                 <div className="md:col-4 md:block hidden ">
                   <Sidebar>
                     <div className="flex items-center justify-center flex-col pb-4 border-b-2 mb-4 border-border">
-                      <AvatarComponent shape="circle" size="2xl" />
-                      <h6>{user.name}</h6>
+                      {/* <AvatarComponent shape="circle" size="2xl" /> */}
+                      <h6>
+                        {user.first_name} {user.last_name}
+                      </h6>
                       <p className="text-sm text-light">{user.email}</p>
                     </div>
                   </Sidebar>

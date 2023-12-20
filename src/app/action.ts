@@ -34,7 +34,7 @@ export const registerUser = async (
   const data = Object.fromEntries(formData.entries());
   const { email, first_name, last_name, password, confirm_password } =
     registrationSchema.parse(data);
-
+  console.log(first_name, last_name, email, password, confirm_password);
   await dbConnect();
   let params;
   try {
@@ -60,7 +60,8 @@ export const registerUser = async (
     await optVerificationService.createUrlParams(email, params);
     const createdUser = await User.create({
       email,
-      name: `${first_name} ${last_name}`,
+      first_name,
+      last_name,
       password: await hashedPassword(password),
       isValid: false,
     });
@@ -135,10 +136,15 @@ export const updatePassword = async (prevState: any, formData: FormData) => {
 export const updateForm = async (prevState: any, formData: FormData) => {
   const session = await getServerSession(authOptions);
   const user = await fetchUser(session);
-  const name = formData?.get("name");
+  const first_name = formData?.get("first_name");
+  const last_name = formData?.get("last_name");
   await dbConnect();
   try {
-    await User.findOneAndUpdate({ email: user.email }, { name }, { new: true });
+    await User.findOneAndUpdate(
+      { email: user.email },
+      { first_name, last_name },
+      { new: true },
+    );
     revalidatePath("/dashboard/settings");
     return {
       status: 200,

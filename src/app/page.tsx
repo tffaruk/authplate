@@ -287,6 +287,7 @@ const Home = async () => {
           </div>
         </section>
       ))}
+
       <Pricing pricing={pricing} products={productsData} />
       <Testimonials data={testimonial} />
       <CallToAction data={callToAction} />

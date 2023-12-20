@@ -1,29 +1,30 @@
 "use client";
 import { updateForm } from "@/app/action";
 import useResponse from "@/hooks/useResponse";
-import { Label, Notification, TextInput } from "keep-react";
+import InputField from "../InputField";
+import LabelField from "../LabelField";
 import SubmitButton from "../SubmitButton";
 
 const UpdateForm = ({ user }: { user: any }) => {
   const { showSubmitted, dispatch, error } = useResponse(updateForm);
-
+  console.log(user);
   return (
     <div>
-      <Notification
+      {/* <Notification
         dismiss={!showSubmitted}
         // onDismiss={onDismiss}
         position="top-right"
         className="max-w-[400px] translate-x-4 transition duration-700 ease-in-out"
       >
         Notification
-      </Notification>
+      </Notification> */}
       <form action={dispatch} className="mx-auto row">
         <div className="col-12">
           <h2 className="mb-2">Update your profile</h2>
         </div>
         <div className="md:col-6 col-12">
-          <Label value="First Name" htmlFor="first_name" />
-          <TextInput
+          <LabelField label="First Name" htmlFor="first_name" />
+          <InputField
             id="first_name"
             placeholder="First Name"
             color="gray"
@@ -34,8 +35,8 @@ const UpdateForm = ({ user }: { user: any }) => {
           />
         </div>
         <div className="md:col-6 col-12">
-          <Label value="Last Name" htmlFor="last_name" />
-          <TextInput
+          <LabelField label="Last Name" htmlFor="last_name" />
+          <InputField
             id="last_name"
             placeholder="Last Name"
             color="gray"

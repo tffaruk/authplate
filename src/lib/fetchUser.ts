@@ -6,11 +6,19 @@ export const fetchUser = async (session: any) => {
   dbConnect();
   const user = await User.findOne(
     { email: session?.user?.email },
-    { email: 1, name: 1, isValid: 1, password: 1, stripe_customer_id: 1 },
+    {
+      email: 1,
+      first_name: 1,
+      last_name: 1,
+      isValid: 1,
+      password: 1,
+      stripe_customer_id: 1,
+    },
   );
   revalidatePath("/");
   const userData = {
-    name: user?.name,
+    first_name: user?.first_name,
+    last_name: user?.last_name,
     email: user?.email,
     isValid: user?.isValid,
     password: user?.password,

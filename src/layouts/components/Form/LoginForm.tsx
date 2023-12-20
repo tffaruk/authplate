@@ -1,9 +1,11 @@
 "use client";
-import { Label, TextInput } from "keep-react";
+// import { Label } from "keep-react";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import InputField from "../InputField";
+import LabelField from "../LabelField";
 
 const LoginForm = () => {
   const formRef = useRef<HTMLFormElement>(null);
@@ -51,26 +53,30 @@ const LoginForm = () => {
       onSubmit={handleSubmit}
     >
       <div className="mb-4">
-        <Label value="Email" htmlFor="email" />
-        <TextInput
+        <LabelField label="Email" htmlFor="email" />
+        <InputField
           id="email"
           placeholder="Email"
           color="gray"
           type="email"
           name="email"
-          handleOnChange={(e) => setEmail(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setEmail(e.target.value)
+          }
           required
         />
       </div>
       <div className="mb-4">
-        <Label value="Password" htmlFor="password" />
-        <TextInput
+        <LabelField label="Password" htmlFor="password" />
+        <InputField
           id="password"
           placeholder="Password"
           color="gray"
           type="password"
           name="password"
-          handleOnChange={(e) => setPassword(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setPassword(e.currentTarget.value)
+          }
           required
         />
       </div>

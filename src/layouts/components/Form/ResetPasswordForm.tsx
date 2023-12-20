@@ -1,7 +1,8 @@
 "use client";
 import { resetPassword } from "@/app/action";
 import useResponse from "@/hooks/useResponse";
-import { Label, TextInput } from "keep-react";
+import InputField from "../InputField";
+import LabelField from "../LabelField";
 import SubmitButton from "../SubmitButton";
 
 const ResetPasswordForm = ({ email }: { email: string }) => {
@@ -13,28 +14,28 @@ const ResetPasswordForm = ({ email }: { email: string }) => {
       <div className="col-12">
         <h2 className="mb-2">Reset Password</h2>
       </div>
+
       <div className="mb-4 col-12 md:col-6">
-        <Label value="Password" htmlFor="password" />
-        <TextInput
-          type="password"
+        <LabelField label="Password" htmlFor="password" />
+        <InputField
           id="password"
+          placeholder="Password"
+          type="password"
           name="password"
-          placeholder="Enter your password"
           required
-          color="gray"
         />
       </div>
       <div className="mb-4 col-12 md:col-6">
-        <Label value="Confirm Password" htmlFor="confirm-password" />
-        <TextInput
+        <LabelField label="Current Password" htmlFor="current_password" />
+        <InputField
           type="password"
           id="confirm-password"
           placeholder="Confirm password"
           name="confirm_password"
           required
-          color="gray"
         />
       </div>
+
       <div className="mb-2">
         <small className="text-red-600">{error}</small>
       </div>

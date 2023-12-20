@@ -1,8 +1,9 @@
 "use client";
 import { registerUser } from "@/app/action";
 import useResponse from "@/hooks/useResponse";
-import { Label, TextInput } from "keep-react";
 import { useState } from "react";
+import InputField from "../InputField";
+import LabelField from "../LabelField";
 import SubmitButton from "../SubmitButton";
 
 const RegisterForm = () => {
@@ -16,8 +17,8 @@ const RegisterForm = () => {
   return (
     <form className="mx-auto mb-10 row" action={dispatch}>
       <div className="mb-4 col-12 md:col-6">
-        <Label value="First Name" htmlFor="first_name" />
-        <TextInput
+        <LabelField label="First Name" htmlFor="first_name" />
+        <InputField
           id="first_name"
           placeholder="First Name"
           color="gray"
@@ -27,8 +28,8 @@ const RegisterForm = () => {
         />
       </div>
       <div className="mb-4 col-12 md:col-6">
-        <Label value="Last Name" htmlFor="last_name" />
-        <TextInput
+        <LabelField label="Last Name" htmlFor="first_name" />
+        <InputField
           id="last_name"
           placeholder="Last Name"
           color="gray"
@@ -38,8 +39,8 @@ const RegisterForm = () => {
         />
       </div>
       <div className="mb-4">
-        <Label value="Email" htmlFor="email" />
-        <TextInput
+        <LabelField label="Email" htmlFor="email" />
+        <InputField
           id="email"
           placeholder="Email"
           color="gray"
@@ -49,8 +50,8 @@ const RegisterForm = () => {
         />
       </div>
       <div className="mb-4 col-12 md:col-6">
-        <Label value="Password" htmlFor="password" />
-        <TextInput
+        <LabelField label="Password" htmlFor="password" />
+        <InputField
           id="password"
           placeholder="Password"
           color="gray"
@@ -60,8 +61,8 @@ const RegisterForm = () => {
         />
       </div>
       <div className="mb-4 col-12 md:col-6">
-        <Label value="Confirm Password" htmlFor="confirm_password" />
-        <TextInput
+        <LabelField label="Confirm Password" htmlFor="confirm_password" />
+        <InputField
           id="confirm_password"
           placeholder="Confirm Password"
           color="gray"

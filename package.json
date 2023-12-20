@@ -31,7 +31,7 @@
     "gray-matter": "^4.0.3",
     "http-status": "^1.7.3",
     "js-md5": "^0.8.3",
-    "keep-react": "^1.0.2",
+    "keep-react": "^1.1.0",
     "marked": "^11.1.0",
     "micro": "^10.0.1",
     "mongodb": "^6.3.0",

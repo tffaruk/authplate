@@ -1,8 +1,6 @@
 "use client";
 import { verifyEmail } from "@/app/action";
 import useResponse from "@/hooks/useResponse";
-import { Notification } from "keep-react";
-import { useFormStatus } from "react-dom";
 import InputField from "../InputField";
 import LabelField from "../LabelField";
 import SubmitButton from "../SubmitButton";
@@ -14,7 +12,7 @@ const EmailVerificationForm = () => {
 
   return (
     <>
-      <Notification
+      {/* <Notification
 
         dismiss={!showSubmitted}
         // onDismiss={onDismiss}
@@ -24,7 +22,7 @@ const EmailVerificationForm = () => {
       >
 
         Notification
-      </Notification>
+      </Notification> */}
       <form className="mx-auto max-w-md" action={dispatch}>
         <div className="mb-4">
           <LabelField label="Email" />
@@ -40,12 +38,14 @@ const EmailVerificationForm = () => {
           <small className="text-red-600">{error}</small>
         </div>
 
-        <SubmitButton label="Submit" className="w-full" pending_label="Submitting" />
+        <SubmitButton
+          label="Submit"
+          className="w-full"
+          pending_label="Submitting"
+        />
       </form>
     </>
   );
 };
 
 export default EmailVerificationForm;
-
-
