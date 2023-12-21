@@ -20,7 +20,7 @@ const Dashboard = async () => {
   const stripeCustomer = await stripe.subscriptions.list({
     customer: user.stripe_customer_id,
   });
-  console.log(user);
+
   return (
     <SidebarContainer user={user}>
       <div className="bg-white rounded-lg px-8 py-12">

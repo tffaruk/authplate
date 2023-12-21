@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@auth/mongodb-adapter": "^2.0.9",
+    "@netlify/plugin-nextjs": "^4.41.3",
     "@paddle/paddle-js": "^0.5.2",
     "@stripe/react-stripe-js": "^2.4.0",
     "@stripe/stripe-js": "^2.2.1",
