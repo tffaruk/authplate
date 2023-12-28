@@ -11,6 +11,5 @@ export async function GET(request: Request) {
 
   const plans = stripeResponse.data;
 
-  // console.log(plans);
   return NextResponse.json(plans);
 }

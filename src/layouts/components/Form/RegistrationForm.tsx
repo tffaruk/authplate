@@ -92,7 +92,7 @@ const RegisterForm = () => {
         <SubmitButton
           label="submit"
           className="w-full"
-          pending_label="submitting"
+          pending_label="submitting..."
         />
       </div>
     </form>

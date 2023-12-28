@@ -1,21 +1,18 @@
 import ImageFallback from "@/helpers/ImageFallback";
 import MDXContent from "@/helpers/MDXContent";
-import { authOptions } from "@/lib/auth";
 import { getListPage } from "@/lib/contentParser";
 import { markdownify } from "@/lib/utils/textConverter";
 import SeoMeta from "@/partials/SeoMeta";
 import { RegularPage } from "@/types";
-import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
 
 const About = async () => {
   const data: RegularPage = getListPage("about/_index.md");
   const { frontmatter, content } = data;
   const { title, meta_title, description, image } = frontmatter;
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    redirect("/login");
-  }
+  // const session = await getServerSession(authOptions);
+  // if (!session) {
+  //   redirect("/login");
+  // }
   return (
     <>
       <SeoMeta

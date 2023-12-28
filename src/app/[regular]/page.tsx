@@ -1,9 +1,7 @@
-import { authOptions } from "@/lib/auth";
 import { getSinglePage } from "@/lib/contentParser";
 import PageHeader from "@/partials/PageHeader";
 import SeoMeta from "@/partials/SeoMeta";
 import { RegularPage } from "@/types";
-import { getServerSession } from "next-auth";
 
 // remove dynamicParams
 export const dynamicParams = false;
@@ -20,8 +18,7 @@ export const generateStaticParams = () => {
 };
 
 // for all regular pages
-const RegularPages = async ({ params }: { params: { regular: string } }) => {
-  const session = await getServerSession(authOptions);
+const RegularPages = ({ params }: { params: { regular: string } }) => {
   const regularData = getSinglePage("pages");
   const data = regularData.filter(
     (page: RegularPage) => page.slug === params.regular,

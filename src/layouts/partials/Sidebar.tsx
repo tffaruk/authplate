@@ -1,12 +1,15 @@
 "use client";
 import SignOutButton from "@/components/SignoutButton";
 import menu from "@/config/menu.json";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const Sidebar = ({ children }: { children: React.ReactNode }) => {
   const { sidebar } = menu;
   const pathname = usePathname();
+  const { data: session } = useSession();
+
   return (
     <aside className="sidebar ">
       {children}

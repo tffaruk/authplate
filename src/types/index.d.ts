@@ -134,3 +134,11 @@ export type PricingCard = {
   button_link: string;
   services: string[];
 };
+
+export type SubscriptionData = {
+  subscription_id: string;
+  product_id: string | Stripe.Product | Stripe.DeletedProduct;
+  pricing_id: string;
+  customer_id: string | Customer | DeletedCustomer;
+  subscription_item_id: string;
+};

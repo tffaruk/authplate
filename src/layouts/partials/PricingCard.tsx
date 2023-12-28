@@ -1,51 +1,22 @@
 "use client";
 
 import getStripe from "@/lib/utils/getStripe";
+import Link from "next/link";
 import CountUp from "react-countup";
 import { BsPinAngleFill } from "react-icons/bs";
-import Stripe from "stripe";
-type PricingCardType = {
-  content: string | undefined;
-  services: string[] | undefined;
-  featured: boolean | undefined;
-  name: string;
-  id: string;
-  button_label: string;
-  currency: string;
-  prices: {
-    product: string | Stripe.Product | Stripe.DeletedProduct;
-    id: string;
-    interval: Stripe.Price.Recurring.Interval | undefined;
-    amount: number | null;
-  }[];
-};
-const handleClick = async (productId: string) => {
-  const res = await fetch("/api/stripe/checkout-session", {
-    method: "POST",
-    body: JSON.stringify(productId),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  const checkoutSession = await res.json().then((value) => {
-    return value.session;
-  });
-  const stripe = await getStripe();
-  const { error } = await stripe!.redirectToCheckout({
-    sessionId: checkoutSession.id,
-  });
-};
 
 const PricingCard = ({
   item,
   isCounter,
   start,
   toggle,
+  active_payment,
 }: {
   item: any;
   isCounter: boolean;
   start: boolean;
   toggle: string;
+  active_payment: boolean;
 }) => {
   const yearlyPrice = item.prices.find(
     (price: any) => price.interval === "year",
@@ -53,8 +24,25 @@ const PricingCard = ({
   const monthlyPrice = item.prices.find(
     (price: any) => price.interval === "month",
   );
-  // console.log({ monthlyPrice, yearlyPrice });
-
+  const handleClick = async (productId: string, interval: string) => {
+    const res = await fetch("/api/stripe/checkout-session", {
+      method: "POST",
+      body: JSON.stringify({
+        price: productId,
+        quantity: interval === "year" ? 1 : 1,
+      } as any),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const checkoutSession = await res.json().then((value) => {
+      return value.session;
+    });
+    const stripe = await getStripe();
+    const { error } = await stripe!.redirectToCheckout({
+      sessionId: checkoutSession.id,
+    });
+  };
   return (
     <div className="mt-6 md:col-6 lg:col-4">
       <div className="rounded-2xl  bg-theme-light">
@@ -109,18 +97,30 @@ const PricingCard = ({
               </li>
             ))}
           </ul>
-          <button
-            className={`btn block text-center ${
-              item.featured
-                ? "btn-primary"
-                : "btn-outline-primary rounded-md text-primary after:bg-primary hover:bg-transparent"
-            }`}
-            onClick={() =>
-              handleClick(!start ? monthlyPrice?.id! : yearlyPrice?.id!)
-            }
-          >
-            {item.button_label}
-          </button>
+          {active_payment ? (
+            <Link
+              href="/dashboard/subscriptions"
+              className={`btn block text-center btn-primary`}
+            >
+              Manage
+            </Link>
+          ) : (
+            <button
+              className={`btn block text-center ${
+                item.featured
+                  ? "btn-primary"
+                  : "btn-outline-primary rounded-md text-primary after:bg-primary hover:bg-transparent"
+              }`}
+              onClick={() =>
+                handleClick(
+                  !start ? monthlyPrice?.id! : yearlyPrice?.id!,
+                  !start ? monthlyPrice?.interval! : yearlyPrice?.interval!,
+                )
+              }
+            >
+              {item.button_label}
+            </button>
+          )}
         </div>
       </div>
     </div>

@@ -1,25 +1,19 @@
 import UpdateForm from "@/components/Form/UpdateForm";
-import Subscription from "@/components/Subscription";
 import { authOptions } from "@/lib/auth";
 import { fetchUser } from "@/lib/fetchUser";
-import { stripe } from "@/lib/utils/stripe";
 import SidebarContainer from "@/partials/SidebarContainer";
-
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 
 const Dashboard = async () => {
   const session = await getServerSession(authOptions);
-  const user = await fetchUser(session);
+  const user = await fetchUser(session?.user?.email!);
 
   if (!session) {
     redirect("/login");
   } else if (user.isValid === false) {
     redirect("/");
   }
-  const stripeCustomer = await stripe.subscriptions.list({
-    customer: user.stripe_customer_id,
-  });
 
   return (
     <SidebarContainer user={user}>
@@ -28,7 +22,6 @@ const Dashboard = async () => {
           <UpdateForm user={user} />
         </div>
       </div>
-      <Subscription id={stripeCustomer?.data[0]?.id} />
     </SidebarContainer>
   );
 };

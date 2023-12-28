@@ -3,7 +3,12 @@ import matter from "gray-matter";
 import { notFound } from "next/navigation";
 import path from "path";
 
-const contentPath = "src/content";
+const source_path = process.cwd();
+let contentPath = "src/content";
+// const contentPath = "src/content";
+if (process.env.NODE_ENV === "production") {
+  contentPath = path.join(source_path, "src/content");
+}
 
 // Helper function to read file content
 const readFile = (filePath: string) => {
@@ -19,7 +24,6 @@ const parseFrontmatter = (frontmatter: any) => {
 // get list page data, ex: _index.md
 export const getListPage = (filePath: string) => {
   const pageDataPath = path.join(contentPath, filePath);
-  console.log(pageDataPath);
   if (!fs.existsSync(pageDataPath)) {
     notFound();
   }

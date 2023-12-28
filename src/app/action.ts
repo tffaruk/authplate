@@ -34,7 +34,7 @@ export const registerUser = async (
   const data = Object.fromEntries(formData.entries());
   const { email, first_name, last_name, password, confirm_password } =
     registrationSchema.parse(data);
-  console.log(first_name, last_name, email, password, confirm_password);
+
   await dbConnect();
   let params;
   try {
@@ -65,7 +65,6 @@ export const registerUser = async (
       password: await hashedPassword(password),
       isValid: false,
     });
-    console.log(createdUser);
   } catch (error: any) {
     if (error instanceof z.ZodError) {
       return {
@@ -83,7 +82,6 @@ export const registerUser = async (
         message: error.message,
       };
     } else if (error instanceof MongoServerError) {
-      console.log(error);
       return {
         status: 400,
         message: error.message,
@@ -101,7 +99,7 @@ export const updatePassword = async (prevState: any, formData: FormData) => {
   const session = await getServerSession(authOptions);
   const data = Object.fromEntries(formData.entries());
   const { current_password, password } = updatePasswordSchema.parse(data);
-  const user = await fetchUser(session);
+  const user = await fetchUser(session?.user?.email!);
   await dbConnect();
   const isMatch = await bcrypt.compare(
     current_password as string,
@@ -135,7 +133,7 @@ export const updatePassword = async (prevState: any, formData: FormData) => {
 // update user
 export const updateForm = async (prevState: any, formData: FormData) => {
   const session = await getServerSession(authOptions);
-  const user = await fetchUser(session);
+  const user = await fetchUser(session?.user?.email!);
   const first_name = formData?.get("first_name");
   const last_name = formData?.get("last_name");
   await dbConnect();
@@ -251,7 +249,7 @@ export const resetPassword = async (
 export const setPassword = async (prevState: any, formData: FormData) => {
   const data = Object.fromEntries(formData.entries());
   const session = await getServerSession(authOptions);
-  const user = await fetchUser(session);
+  const user = await fetchUser(session?.user?.email!);
   const { password, confirm_password } = resetPasswordSchema.parse(data);
 
   await dbConnect();

@@ -1,14 +1,16 @@
+import config from "@/config/config.json";
 import { authOptions } from "@/lib/auth";
 import { stripe } from "@/lib/utils/stripe";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
+const { base_url } = config.site;
+
 export async function POST(req: NextRequest) {
   const body = await req.json();
-
   const session = await getServerSession(authOptions);
-
+  const { price, quantity } = body || {};
   if (!session?.user) {
     return NextResponse.json(
       {
@@ -20,19 +22,24 @@ export async function POST(req: NextRequest) {
       { status: 401 },
     );
   }
+  const line_items = quantity ? { price, quantity } : { price };
   const checkoutSession = await stripe.checkout.sessions.create({
     mode: "subscription",
     customer:
       (session?.user as { stripe_customer_id?: string })?.stripe_customer_id! ||
       null,
-    line_items: [
-      {
-        price: body,
-        quantity: 1,
-      },
-    ],
-    success_url: "http://localhost:3000" + `?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: "http://localhost:3000",
+    line_items: [line_items],
+    success_url:
+      process.env.NODE_ENV === "development"
+        ? "http://localhost:3000/dashboard/subscriptions" +
+          `?session_id={CHECKOUT_SESSION_ID}`
+        : base_url +
+          "/dashboard/subscriptions" +
+          `?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url:
+      process.env.NODE_ENV === "development"
+        ? "http://localhost:3000"
+        : base_url,
     subscription_data: {
       metadata: {
         payingUserId: session.user.email,

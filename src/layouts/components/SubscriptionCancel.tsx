@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 
-const Subscription = ({ id }: { id: string }) => {
+const SubscriptionCancel = ({ id }: { id: string }) => {
   const router = useRouter();
 
   const cancelSubscription = async () => {
@@ -14,17 +14,21 @@ const Subscription = ({ id }: { id: string }) => {
           "Content-Type": "application/json",
         },
       });
-      console.log(res);
-      router.push("/");
+      if (res.status === 200) {
+        router.push("/dashboard/subscriptions");
+      }
     } catch (error) {
       console.log(error);
     }
   };
   return (
-    <button onClick={cancelSubscription} className="btn btn-primary mt-8">
-      Cancel Subscription
+    <button
+      onClick={cancelSubscription}
+      className="btn btn-primary bg-red-800 border-red-800"
+    >
+      Cancel
     </button>
   );
 };
 
-export default Subscription;
+export default SubscriptionCancel;

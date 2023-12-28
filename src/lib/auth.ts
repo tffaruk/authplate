@@ -71,6 +71,10 @@ export const authOptions: NextAuthOptions = {
         email: (token._doc as { email?: string })?.email,
         stripe_customer_id: (token._doc as { stripe_customer_id?: string })
           ?.stripe_customer_id,
+        stripe_subscription_id: (
+          token._doc as { stripe_subscription_id?: string }
+        )?.stripe_subscription_id,
+        isActive: (token._doc as { isActive?: boolean })?.isActive,
       };
 
       session.user = sessionUser as any;
@@ -80,24 +84,21 @@ export const authOptions: NextAuthOptions = {
 
   events: {
     signIn: async ({ user }: { user: any }) => {
-      if (payment === "stripe") {
-        const customerData = await stripe.customers.list({
-          email: (user?._doc as { email?: string })?.email,
-        });
-        if (!customerData.data.length) {
-          await stripe.customers
-            .create({
-              email: user._doc.email!,
-              name: user._doc.name!,
-            })
-            .then(async (customer) => {
-              console.log(customer);
-              return await User.findOneAndUpdate(
-                { email: customer.email },
-                { stripe_customer_id: customer.id },
-              );
-            });
-        }
+      const customerData = await stripe.customers.list({
+        email: (user?._doc as { email?: string })?.email,
+      });
+      if (!customerData.data.length) {
+        await stripe.customers
+          .create({
+            email: user._doc.email!,
+            name: user._doc.name!,
+          })
+          .then(async (customer) => {
+            return await User.findOneAndUpdate(
+              { email: customer.email },
+              { stripe_customer_id: customer.id },
+            );
+          });
       }
     },
   },

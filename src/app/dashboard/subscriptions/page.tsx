@@ -1,12 +1,12 @@
-import UpdatePasswordForm from "@/components/Form/UpdatePasswordForm";
-import SetPasswordForProvider from "@/components/SetPasswordForProvider";
 import { authOptions } from "@/lib/auth";
 import { fetchUser } from "@/lib/fetchUser";
 import SidebarContainer from "@/partials/SidebarContainer";
 import { getServerSession } from "next-auth";
+import Link from "next/link";
 import { redirect } from "next/navigation";
+import SubscriptionPlans from "./subscriptionPlans";
 
-const Settings = async () => {
+const Subscription = async () => {
   const session = await getServerSession(authOptions);
   const user = await fetchUser(session?.user?.email!);
   if (!session) {
@@ -14,15 +14,24 @@ const Settings = async () => {
   } else if (user?.isValid === false) {
     redirect("/");
   }
+
   return (
     <SidebarContainer user={user}>
-      <div className="bg-white rounded-lg px-8 py-12">
-        <div className="mb-12">
-          {user.isValid ? <UpdatePasswordForm /> : <SetPasswordForProvider />}
+      {user.isActive ? (
+        <SubscriptionPlans user={user} />
+      ) : (
+        <div className="text-center">
+          <h1 className="h4">You don't have any subscription</h1>
+          <p>
+            Click here for buy a{" "}
+            <Link href="/#pricing" className="underline font-semibold">
+              subscription here
+            </Link>
+          </p>
         </div>
-      </div>
+      )}
     </SidebarContainer>
   );
 };
 
-export default Settings;
+export default Subscription;

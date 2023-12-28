@@ -6,9 +6,11 @@ import PricingCard from "./PricingCard";
 const Pricing = ({
   pricing,
   products,
+  active_payment,
 }: {
   pricing: Pricing;
   products: Product[];
+  active_payment: boolean;
 }) => {
   const [isCounter, setIsCounter] = useState(false);
   const [start, setStart] = useState(false);
@@ -31,7 +33,7 @@ const Pricing = ({
   });
 
   return (
-    <section className="section bg-theme-light/30">
+    <section className="section bg-theme-light/30" id="pricing">
       <div className="container">
         <div className="row">
           <div className="mb-12 text-center md:col-12">
@@ -65,6 +67,7 @@ const Pricing = ({
             <div className="row">
               {mergeProductPrice.map((item, i) => (
                 <PricingCard
+                  active_payment={active_payment}
                   item={item}
                   key={i}
                   start={start}

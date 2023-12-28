@@ -22,7 +22,8 @@ import { FaRegCircleCheck } from "react-icons/fa6";
 
 const Home = async () => {
   const session = await getServerSession(authOptions);
-  const user = await fetchUser(session);
+  const user = await fetchUser(session?.user?.email!);
+
   const homepage = getListPage("homepage/_index.md");
   const testimonial = getListPage("sections/testimonial.md");
   const callToAction = getListPage("sections/call-to-action.md");
@@ -46,9 +47,8 @@ const Home = async () => {
   } = frontmatter;
 
   const stripeResponse = await stripe.prices.list();
-  const products = (await stripe.products.list()).data;
+  const products = (await stripe.products.list({ active: true })).data;
   const plans = stripeResponse.data;
-
   const productsData = products.map((product) => {
     const plan = plans.filter((plan) => plan.product === product.id);
     return {
@@ -288,7 +288,11 @@ const Home = async () => {
         </section>
       ))}
 
-      <Pricing pricing={pricing} products={productsData} />
+      <Pricing
+        pricing={pricing}
+        products={productsData}
+        active_payment={user.isActive}
+      />
       <Testimonials data={testimonial} />
       <CallToAction data={callToAction} />
     </>

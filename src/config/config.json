@@ -1,7 +1,7 @@
 {
   "site": {
     "title": "Authplate",
-    "base_url": "https://authplate.netlify.app",
+    "base_url": "https://authplate.vercel.app",
     "base_path": "/",
     "trailing_slash": false,
     "favicon": "/images/favicon.png",

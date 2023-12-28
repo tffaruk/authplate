@@ -7,17 +7,8 @@ import SubmitButton from "../SubmitButton";
 
 const UpdateForm = ({ user }: { user: any }) => {
   const { showSubmitted, dispatch, error } = useResponse(updateForm);
-  console.log(user);
   return (
     <div>
-      {/* <Notification
-        dismiss={!showSubmitted}
-        // onDismiss={onDismiss}
-        position="top-right"
-        className="max-w-[400px] translate-x-4 transition duration-700 ease-in-out"
-      >
-        Notification
-      </Notification> */}
       <form action={dispatch} className="mx-auto row">
         <div className="col-12">
           <h2 className="mb-2">Update your profile</h2>
@@ -53,7 +44,7 @@ const UpdateForm = ({ user }: { user: any }) => {
           <SubmitButton
             label="Save Update"
             className="inline"
-            pending_label="Save Updating..."
+            pending_label="Updating..."
           />
         </div>
       </form>

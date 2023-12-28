@@ -1,17 +1,15 @@
+import { fetchUser } from "@/lib/fetchUser";
+import { stripe } from "@/lib/utils/stripe";
 import { dbConnect } from "@/server/db";
 import { User } from "@/server/model/user.model";
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
-``
-const stripe = new Stripe(
-  "sk_test_51OLgmKGX3tVq15Ofg9KGf7Ca0n0mhecLLP9NV25kwuy2CuKK6pVogTY2IHuRgRbVaA6dDyhUeV3aPqA2gC1dPLpZ00oruFXQ89",
-  {
-    // https://github.com/stripe/stripe-node#configuration
-    apiVersion: "2023-10-16",
-  },
-);
+``;
 
-const webhookSecret: string = process.env.STRIPE_WEBHOOK_SECRET!;
+const webhookSecret: string =
+  process.env.NODE_ENV === "development"
+    ? process.env.LOCAL_WEBHOOK_SECRET!
+    : "whsec_Ah2nHiiBk1z2avWZ0kj1ei0Q6jH8hkeA";
 
 const webhookHandler = async (req: NextRequest) => {
   await dbConnect();
@@ -22,10 +20,10 @@ const webhookHandler = async (req: NextRequest) => {
   try {
     event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
   } catch (err) {
+    console.log(err);
     const errorMessage = err instanceof Error ? err.message : "Unknown error";
     // On error, log and return the error message.
     if (err! instanceof Error) console.log(`❌ Error message: ${errorMessage}`);
-
     return NextResponse.json(
       {
         error: {
@@ -37,6 +35,7 @@ const webhookHandler = async (req: NextRequest) => {
   }
   // getting to the data we want from the event
   const subscription = event.data.object as Stripe.Subscription;
+
   switch (event.type) {
     case "customer.subscription.created":
       await User.findOneAndUpdate(
@@ -45,17 +44,31 @@ const webhookHandler = async (req: NextRequest) => {
         },
         {
           isActive: true,
-          subscriptionId: subscription.id,
+          stripe_subscription_id: subscription.id,
         },
       );
       break;
     case "customer.subscription.deleted":
+      await fetchUser(subscription.metadata.payingUserId);
       await User.findOneAndUpdate(
         {
           stripe_customer_id: subscription.customer,
         },
         {
           isActive: false,
+          stripe_subscription_id: "",
+        },
+      );
+      break;
+    case "customer.subscription.updated":
+      await fetchUser(subscription.metadata.payingUserId);
+      await User.findOneAndUpdate(
+        {
+          stripe_customer_id: subscription.customer,
+        },
+        {
+          isActive: true,
+          stripe_subscription_id: subscription.id,
         },
       );
       break;
