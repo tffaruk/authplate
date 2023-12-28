@@ -9,6 +9,7 @@ const useResponse = (
     status: number;
     message: string;
   } | void>,
+  setActive?: (active: boolean) => void,
 ) => {
   const [state, dispatch] = useFormState(updateForm, null);
   const [showSubmitted, setShowSubmitted] = useState(false);
@@ -16,6 +17,7 @@ const useResponse = (
   const [successMessage, setSuccessMessage] = useState("");
   useEffect(() => {
     if (state?.status === 200) {
+
       setShowSubmitted(true);
       setSuccessMessage(state?.message);
       const clearSubmitted = () => setShowSubmitted(false);

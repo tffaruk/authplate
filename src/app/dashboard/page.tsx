@@ -14,7 +14,6 @@ const Dashboard = async () => {
   } else if (user.isValid === false) {
     redirect("/");
   }
-
   return (
     <SidebarContainer user={user}>
       <div className="bg-white rounded-lg px-8 py-12">

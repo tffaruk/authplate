@@ -3,6 +3,7 @@ import ApiError from "@/error/ApiError";
 import { authOptions } from "@/lib/auth";
 import { fetchUser } from "@/lib/fetchUser";
 import { generateRandomBase24 } from "@/lib/generateUrlParams";
+import { stripe } from "@/lib/utils/stripe";
 import {
   registrationSchema,
   resetPasswordSchema,
@@ -272,6 +273,25 @@ export const setPassword = async (prevState: any, formData: FormData) => {
       success: true,
       status: 200,
       message: "Password updated successfully",
+    };
+  } catch (error: any) {
+    return {
+      status: error.statusCode,
+      message: error.message,
+    };
+  }
+};
+
+// subscription cancel
+export const subscriptionCancel = async (subscription_id: string) => {
+  await dbConnect();
+  try {
+    await stripe.subscriptions.cancel(subscription_id);
+    revalidatePath("/dashboard/subscriptions");
+    return {
+      success: true,
+      status: 200,
+      message: "Subscription canceled successfully",
     };
   } catch (error: any) {
     return {

@@ -1,5 +1,5 @@
 "use client";
-import SubscriptionCancel from "@/components/SubscriptionCancel";
+import SubscriptionCancel from "@/app/dashboard/subscriptions/SubscriptionCancel";
 import { Product, SubscriptionData } from "@/types";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -11,9 +11,18 @@ const SubscriptionCard = ({
   productsData: Product[];
   subsCriptionData: SubscriptionData;
 }) => {
+  const [subscriptionPlan, setSubscriptionPlan] = useState({
+    plan_interval: subsCriptionData.subscription_interval,
+    pricing_id: subsCriptionData.pricing_id,
+    product_id: subsCriptionData.product_id,
+  });
   const [interval, setInterval] = useState(
     subsCriptionData.subscription_interval,
   );
+  // const [optimisticMessages, addOptimisticMessage] = useOptimistic(
+  //   subscriptionPlan,
+  //   (state, newMessage) => [...state],
+  // );
   const handleChange = (params: string) => {
     setInterval(params);
   };
@@ -33,11 +42,24 @@ const SubscriptionCard = ({
         subscriptionPriceId: subsCriptionData.subscription_item_id,
       }),
     });
-
     setLoading("");
+    setSubscriptionPlan({
+      plan_interval: interval,
+      pricing_id: id,
+      product_id: product_id,
+    });
+
     // Handle UI update or redirect as needed
     // router.push("/dashboard");
   };
+
+  const productPlan = productsData.find(
+    (item) => item.id === subsCriptionData.product_id,
+  );
+  const plan = productPlan?.prices.find(
+    (data) => data.interval === subscriptionPlan.plan_interval,
+  );
+
   return (
     <div>
       <div className=" rounded-lg p-2 w-60  flex justify-between">
@@ -75,7 +97,8 @@ const SubscriptionCard = ({
               </h2>
             </div>
             <div>
-              {item.id === subsCriptionData.product_id ? (
+              {item.id === subscriptionPlan.product_id &&
+              plan?.interval === interval ? (
                 <SubscriptionCancel id={subsCriptionData.subscription_id} />
               ) : (
                 <button
