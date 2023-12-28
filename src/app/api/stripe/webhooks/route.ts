@@ -9,7 +9,7 @@ import Stripe from "stripe";
 const webhookSecret: string =
   process.env.NODE_ENV === "development"
     ? process.env.LOCAL_WEBHOOK_SECRET!
-    : "whsec_Ah2nHiiBk1z2avWZ0kj1ei0Q6jH8hkeA";
+    : (process.env.STRIPE_WEBHOOK_SECRET as string);
 
 const webhookHandler = async (req: NextRequest) => {
   await dbConnect();
