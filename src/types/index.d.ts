@@ -141,4 +141,5 @@ export type SubscriptionData = {
   pricing_id: string;
   customer_id: string | Customer | DeletedCustomer;
   subscription_item_id: string;
+  subscription_interval: string;
 };

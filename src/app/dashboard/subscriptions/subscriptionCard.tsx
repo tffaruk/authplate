@@ -11,7 +11,9 @@ const SubscriptionCard = ({
   productsData: Product[];
   subsCriptionData: SubscriptionData;
 }) => {
-  const [interval, setInterval] = useState("month");
+  const [interval, setInterval] = useState(
+    subsCriptionData.subscription_interval,
+  );
   const handleChange = (params: string) => {
     setInterval(params);
   };

@@ -31,6 +31,7 @@ const SubscriptionPlans = async ({ user }: { user: Partial<UserType> }) => {
     product_id: subscription.items.data[0].plan.product!,
     pricing_id: subscription.items.data[0].plan.id,
     customer_id: subscription.customer!,
+    subscription_interval: subscription.items.data[0].plan?.interval!,
     subscription_item_id: subscription.items.data[0].id,
   };
   return (
