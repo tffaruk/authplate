@@ -67,7 +67,7 @@ const Pricing = ({
             <div className="row">
               {mergeProductPrice.map((item, i) => (
                 <PricingCard
-                  active_payment={active_payment}
+                  active_payment={active_payment!}
                   item={item}
                   key={i}
                   start={start}

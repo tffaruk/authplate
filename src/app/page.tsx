@@ -23,7 +23,6 @@ import { FaRegCircleCheck } from "react-icons/fa6";
 const Home = async () => {
   const session = await getServerSession(authOptions);
   const user = await fetchUser(session?.user?.email!);
-
   const homepage = getListPage("homepage/_index.md");
   const testimonial = getListPage("sections/testimonial.md");
   const callToAction = getListPage("sections/call-to-action.md");
@@ -291,7 +290,7 @@ const Home = async () => {
       <Pricing
         pricing={pricing}
         products={productsData}
-        active_payment={user.isActive}
+        active_payment={user?.isActive}
       />
       <Testimonials data={testimonial} />
       <CallToAction data={callToAction} />

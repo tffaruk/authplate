@@ -4,7 +4,6 @@ import { dbConnect } from "@/server/db";
 import { User } from "@/server/model/user.model";
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
-``;
 
 const webhookSecret: string =
   process.env.NODE_ENV === "development"
@@ -38,6 +37,7 @@ const webhookHandler = async (req: NextRequest) => {
 
   switch (event.type) {
     case "customer.subscription.created":
+      await fetchUser(subscription.metadata.payingUserId);
       await User.findOneAndUpdate(
         {
           stripe_customer_id: subscription.customer,
