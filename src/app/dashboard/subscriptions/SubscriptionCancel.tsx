@@ -2,19 +2,20 @@
 
 import { subscriptionCancel } from "@/app/action";
 import SubmitButton from "@/components/SubmitButton";
-import useResponse from "@/hooks/useResponse";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { useFormState } from "react-dom";
 
-const SubscriptionCancel = ({
-  id,
-
-}: {
-  id: string;
- 
-}) => {
+const SubscriptionCancel = ({ id }: { id: string }) => {
   const subscriptionCancelAction = subscriptionCancel.bind(null, id);
-  const { dispatch } = useResponse(subscriptionCancelAction);
+  const [state, dispatch] = useFormState(subscriptionCancelAction, null);
+  const router = useRouter();
 
+  useEffect(() => {
+    if (state?.status === 200) {
+      router.refresh();
+    }
+  }, [state]);
   return (
     <form action={dispatch}>
       <SubmitButton
