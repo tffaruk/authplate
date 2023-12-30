@@ -1,6 +1,8 @@
+import { fetchUser } from "@/lib/fetchUser";
 import { stripe } from "@/lib/utils/stripe";
 import { dbConnect } from "@/server/db";
 import { User } from "@/server/model/user.model";
+import { revalidatePath } from "next/cache";
 
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
@@ -37,6 +39,7 @@ const webhookHandler = async (req: NextRequest) => {
 
   switch (event.type) {
     case "customer.subscription.created":
+      await fetchUser(subscription.metadata.payingUserId);
       await User.findOneAndUpdate(
         {
           stripe_customer_id: subscription.customer,
@@ -48,7 +51,7 @@ const webhookHandler = async (req: NextRequest) => {
       );
       break;
     case "customer.subscription.deleted":
-      await User.findOneAndUpdate(
+      const deleteData = await User.findOneAndUpdate(
         {
           stripe_customer_id: subscription.customer,
         },
@@ -56,11 +59,13 @@ const webhookHandler = async (req: NextRequest) => {
           isActive: false,
           stripe_subscription_id: "",
         },
+        { new: true },
       );
 
       break;
     case "customer.subscription.updated":
-      await User.findOneAndUpdate(
+      await fetchUser(subscription.metadata.payingUserId);
+      const update = await User.findOneAndUpdate(
         {
           stripe_customer_id: subscription.customer,
         },
@@ -74,6 +79,7 @@ const webhookHandler = async (req: NextRequest) => {
     default:
       throw new Error("Unhandled relevant event!");
   }
+  revalidatePath("/dashboard/subscriptions");
   // Return a response to acknowledge receipt of the event.
   return NextResponse.json({ received: true });
 };
