@@ -1,7 +1,7 @@
 "use server";
 import ApiError from "@/error/ApiError";
 import { authOptions } from "@/lib/auth";
-import { fetchUserByEmail } from "@/lib/fetchUser";
+import { fetchUser } from "@/lib/fetchUser";
 import { generateRandomBase24 } from "@/lib/generateUrlParams";
 import { stripe } from "@/lib/utils/stripe";
 import {
@@ -100,16 +100,16 @@ export const updatePassword = async (prevState: any, formData: FormData) => {
   const session = await getServerSession(authOptions);
   const data = Object.fromEntries(formData.entries());
   const { current_password, password } = updatePasswordSchema.parse(data);
-  const user = await fetchUserByEmail();
+  const user = await fetchUser(session?.user?.email!);
   await dbConnect();
   const isMatch = await bcrypt.compare(
     current_password as string,
-    user.data.password as string,
+    user.password as string,
   );
   try {
     if (!isMatch) throw Error("current password is not valid");
     await User.updateOne(
-      { email: user.data.email },
+      { email: user.email },
       {
         $set: {
           password: await hashedPassword(password),
@@ -133,13 +133,14 @@ export const updatePassword = async (prevState: any, formData: FormData) => {
 
 // update user
 export const updateForm = async (prevState: any, formData: FormData) => {
-  const user = await fetchUserByEmail();
+  const session = await getServerSession(authOptions);
+  const user = await fetchUser(session?.user?.email!);
   const first_name = formData?.get("first_name");
   const last_name = formData?.get("last_name");
   await dbConnect();
   try {
     await User.findOneAndUpdate(
-      { email: user.data.email },
+      { email: user.email },
       { first_name, last_name },
       { new: true },
     );
@@ -249,7 +250,7 @@ export const resetPassword = async (
 export const setPassword = async (prevState: any, formData: FormData) => {
   const data = Object.fromEntries(formData.entries());
   const session = await getServerSession(authOptions);
-  const user = await fetchUserByEmail();
+  const user = await fetchUser(session?.user?.email!);
   const { password, confirm_password } = resetPasswordSchema.parse(data);
 
   await dbConnect();
@@ -258,7 +259,7 @@ export const setPassword = async (prevState: any, formData: FormData) => {
       throw new ApiError("Password does not match", 400, "");
     }
     await User.findOneAndUpdate(
-      { email: user.data.email },
+      { email: user.email },
       {
         $set: {
           password: await hashedPassword(password),
@@ -286,6 +287,7 @@ export const subscriptionCancel = async (subscription_id: string) => {
   await dbConnect();
   try {
     await stripe.subscriptions.cancel(subscription_id);
+    revalidatePath("/dashboard/subscriptions");
     return {
       success: true,
       status: 200,
@@ -296,7 +298,5 @@ export const subscriptionCancel = async (subscription_id: string) => {
       status: error.statusCode,
       message: error.message,
     };
-  } finally {
-    revalidatePath("/dashboard/subscriptions");
   }
 };

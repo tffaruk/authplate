@@ -1,5 +1,5 @@
 import { authOptions } from "@/lib/auth";
-import { fetchUserByEmail } from "@/lib/fetchUser";
+import { fetchUser } from "@/lib/fetchUser";
 import SidebarContainer from "@/partials/SidebarContainer";
 import { getServerSession } from "next-auth";
 import Link from "next/link";
@@ -8,19 +8,17 @@ import SubscriptionPlans from "./subscriptionPlans";
 
 const Subscription = async () => {
   const session = await getServerSession(authOptions);
-  const user = await fetchUserByEmail();
-  const {
-    data: { isValid, isActive, stripe_subscription_id },
-  } = user;
+  const user = await fetchUser(session?.user?.email!);
   if (!session) {
     redirect("/login");
-  } else if (isValid === false) {
+  } else if (user?.isValid === false) {
     redirect("/");
   }
+
   return (
-    <SidebarContainer user={user.data}>
-      {isActive ? (
-        <SubscriptionPlans user={user.data} />
+    <SidebarContainer user={user}>
+      {user.isActive ? (
+        <SubscriptionPlans user={user} />
       ) : (
         <div className="text-center">
           <h1 className="h4">You don't have any subscription</h1>

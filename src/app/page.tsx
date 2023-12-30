@@ -1,7 +1,8 @@
 import DynamicIcon from "@/helpers/DynamicIcon";
 import ImageFallback from "@/helpers/ImageFallback";
+import { authOptions } from "@/lib/auth";
 import { getListPage } from "@/lib/contentParser";
-import { fetchUserByEmail } from "@/lib/fetchUser";
+import { fetchUser } from "@/lib/fetchUser";
 import { stripe } from "@/lib/utils/stripe";
 import { markdownify } from "@/lib/utils/textConverter";
 import CallToAction from "@/partials/CallToAction";
@@ -15,23 +16,13 @@ import {
   Feature_Details,
   Features,
 } from "@/types";
+import { getServerSession } from "next-auth";
 import Link from "next/link";
 import { FaRegCircleCheck } from "react-icons/fa6";
 
 const Home = async () => {
-  const user = await fetchUserByEmail();
-  const {
-    data: {
-      first_name,
-      last_name,
-      email,
-      isValid,
-      password,
-      stripe_customer_id,
-      stripe_subscription_id,
-      isActive,
-    },
-  } = user;
+  const session = await getServerSession(authOptions);
+  const user = await fetchUser(session?.user?.email!);
   const homepage = getListPage("homepage/_index.md");
   const testimonial = getListPage("sections/testimonial.md");
   const callToAction = getListPage("sections/call-to-action.md");
@@ -79,7 +70,7 @@ const Home = async () => {
       <SeoMeta />
       <section>
         <div className="container">
-          {isValid === false && (
+          {user?.isValid === false && (
             <p className="text-center">
               Your email address is not verified yet{" "}
               <Link
@@ -299,7 +290,7 @@ const Home = async () => {
       <Pricing
         pricing={pricing}
         products={productsData}
-        active_payment={isActive}
+        active_payment={user?.isActive}
       />
       <Testimonials data={testimonial} />
       <CallToAction data={callToAction} />

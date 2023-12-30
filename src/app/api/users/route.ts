@@ -1,10 +1,8 @@
 import ApiError from "@/error/ApiError";
-import { authOptions } from "@/lib/auth";
 import { generateRandomBase24 } from "@/lib/generateUrlParams";
 import { dbConnect } from "@/server/db";
 import { User } from "@/server/model/user.model";
 import bcrypt from "bcrypt";
-import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { optVerificationService } from "../utils";
 
@@ -35,25 +33,6 @@ export const POST = async (request: NextRequest) => {
   } catch (err: any) {
     return new NextResponse(err.message, {
       status: 500,
-    });
-  }
-};
-
-export const GET = async (request: NextRequest) => {
-  const session = await getServerSession(authOptions);
-  await dbConnect();
-  try {
-    const data = await User.findOne({ email: session?.user?.email });
-    return NextResponse.json({
-      data,
-      status: 200,
-      params: "",
-    });
-  } catch (error: any) {
-    return NextResponse.json({
-      data: error.message,
-      status: 500,
-      params: "",
     });
   }
 };
