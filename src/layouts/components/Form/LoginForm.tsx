@@ -17,23 +17,20 @@ const LoginForm = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    try {
-      const res = await signIn("credentials", {
-        email: email,
-        password: password,
-        redirect: false,
-        payment: "paddle",
-      });
+    const res = await signIn("credentials", {
+      email: email,
+      password: password,
+      redirect: false,
+      payment: "paddle",
+    });
 
-      if (res!.status === 200) {
-        sessionStorage.setItem("remember", JSON.stringify(true));
-        router.push("/");
-        formRef!.current!.reset();
-        setError("");
-      }
-    } catch (err) {
-      console.log("error");
-      console.log(err);
+    if (res!.status === 200) {
+      sessionStorage.setItem("remember", JSON.stringify(true));
+      router.push("/");
+      formRef!.current!.reset();
+      setError("");
+    } else if (res!.status === 401) {
+      setError("Invalid credentials");
     }
   };
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

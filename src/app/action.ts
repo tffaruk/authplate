@@ -53,6 +53,7 @@ export const registerUser = async (
     if (user) {
       throw new ApiError("user already exist", 400, "");
     }
+    console.log(user);
     const verify = await optVerificationService.verifyUserService(
       email,
       new Date().toISOString(),
@@ -68,28 +69,34 @@ export const registerUser = async (
     });
   } catch (error: any) {
     if (error instanceof z.ZodError) {
+      console.log("zod error");
       return {
         status: 400,
         message: JSON.stringify(error.issues),
       };
     } else if (error instanceof ApiError) {
+      console.log("api error");
+
       return {
         status: error.statusCode,
         message: error.message,
       };
     } else if (error instanceof Error) {
+      console.log(" error");
+
       return {
         status: 400,
         message: error.message,
       };
     } else if (error instanceof MongoServerError) {
+      console.log("mongo");
       return {
         status: 400,
         message: error.message,
       };
     }
   } finally {
-    if (permission) {
+    if (permission && params) {
       redirect(`/login/otp?params=${params}`);
     }
   }
