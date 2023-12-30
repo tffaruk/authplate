@@ -294,6 +294,7 @@ export const subscriptionCancel = async (subscription_id: string) => {
       message: "Subscription canceled successfully",
     };
   } catch (error: any) {
+    console.log(error);
     return {
       status: error.statusCode,
       message: error.message,
