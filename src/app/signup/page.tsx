@@ -1,10 +1,21 @@
 import RegisterForm from "@/components/Form/RegistrationForm";
 import FormContainer from "@/components/FormContainer";
+import Provider from "@/components/Provider";
+import { authOptions } from "@/lib/auth";
+import { getServerSession } from "next-auth";
+import { getProviders } from "next-auth/react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 const SignUp = async () => {
   // const provider = await getProviders();
   // const authProviders = Object?.values(provider!);
+  const session = await getServerSession(authOptions);
+  if (session) {
+    redirect("/");
+  }
+  const provider = await getProviders();
+  let authProviders = Object?.values(provider!);
   return (
     <FormContainer>
       <div className="text-center mb-12">
@@ -17,7 +28,7 @@ const SignUp = async () => {
         </p>
       </div>
       <RegisterForm />
-      {/* <div className="relative w-full h-[1px] bg-[#B3B8C2] mb-4">
+      <div className="relative w-full h-[1px] bg-[#B3B8C2] mb-4">
         <span className="absolute bg-theme-light z-10 inline-block left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 px-2">
           Or Continue With
         </span>
@@ -27,7 +38,7 @@ const SignUp = async () => {
           provider.type != "credentials" && (
             <Provider key={provider.id} provider={provider} />
           ),
-      )} */}
+      )}
     </FormContainer>
   );
 };

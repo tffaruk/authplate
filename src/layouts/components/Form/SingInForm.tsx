@@ -1,13 +1,7 @@
-import { getProviders } from "next-auth/react";
 import Provider from "../Provider";
 import LoginForm from "./LoginForm";
 
-const SingInForm = async () => {
-  const provider = await getProviders();
-  let authProviders;
-  if (provider) {
-    authProviders = Object?.values(provider!);
-  }
+const SingInForm = async ({ authProviders }: { authProviders: any }) => {
   return (
     <>
       <LoginForm key="credentials" />
@@ -17,7 +11,7 @@ const SingInForm = async () => {
         </span>
       </div>
       {authProviders?.map(
-        (provider) =>
+        (provider: any) =>
           provider.type != "credentials" && (
             <Provider key={provider.id} provider={provider} />
           ),

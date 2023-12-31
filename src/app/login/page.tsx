@@ -2,15 +2,18 @@ import SingInForm from "@/components/Form/SingInForm";
 import FormContainer from "@/components/FormContainer";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth"; // Change the type as needed
+import { getProviders } from "next-auth/react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-
 
 const Signin = async () => {
   const session = await getServerSession(authOptions);
   if (session) {
     redirect("/");
   }
+  const provider = await getProviders();
+  let authProviders = Object?.values(provider!);
+
   return (
     <>
       <FormContainer>
@@ -23,7 +26,7 @@ const Signin = async () => {
             </span>
           </p>
         </div>
-        <SingInForm />
+        <SingInForm authProviders={authProviders} />
       </FormContainer>
     </>
   );
