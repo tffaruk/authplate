@@ -87,6 +87,7 @@ export const authOptions: NextAuthOptions = {
       const customerData = await stripe.customers.list({
         email: (user?._doc as { email?: string })?.email,
       });
+      console.log(customerData.data.length);
       if (!customerData.data.length) {
         await stripe.customers
           .create({

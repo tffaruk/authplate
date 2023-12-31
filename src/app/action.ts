@@ -67,6 +67,12 @@ export const registerUser = async (
       password: await hashedPassword(password),
       isValid: false,
     });
+    return {
+      email,
+      password,
+      status: 200,
+      message: "User created successfully",
+    };
   } catch (error: any) {
     if (error instanceof z.ZodError) {
       console.log("zod error");

@@ -1,5 +1,6 @@
 import config from "@/config/config.json";
 import { authOptions } from "@/lib/auth";
+import { fetchUser } from "@/lib/fetchUser";
 import { stripe } from "@/lib/utils/stripe";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
@@ -10,24 +11,15 @@ const { base_url } = config.site;
 export async function POST(req: NextRequest) {
   const body = await req.json();
   const session = await getServerSession(authOptions);
+  const user = await fetchUser(session?.user?.email!);
   const { price, quantity } = body || {};
   if (!session?.user) {
-    return NextResponse.json(
-      {
-        error: {
-          code: "no-access",
-          message: "You are not signed in.",
-        },
-      },
-      { status: 401 },
-    );
+    throw new Error("You must be signed in to make a purchase");
   }
   const line_items = quantity ? { price, quantity } : { price };
   const checkoutSession = await stripe.checkout.sessions.create({
     mode: "subscription",
-    customer:
-      (session?.user as { stripe_customer_id?: string })?.stripe_customer_id! ||
-      null,
+    customer: user?.stripe_customer_id! || null,
     line_items: [line_items],
     success_url:
       process.env.NODE_ENV === "development"

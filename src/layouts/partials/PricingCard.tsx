@@ -1,7 +1,9 @@
 "use client";
 
 import getStripe from "@/lib/utils/getStripe";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { useState } from "react";
 import CountUp from "react-countup";
 import { BsPinAngleFill } from "react-icons/bs";
 
@@ -24,25 +26,37 @@ const PricingCard = ({
   const monthlyPrice = item.prices.find(
     (price: any) => price.interval === "month",
   );
+  const { data: session } = useSession();
+  const [error, setError] = useState("");
   const handleClick = async (productId: string, interval: string) => {
-    const res = await fetch("/api/stripe/checkout-session", {
-      method: "POST",
-      body: JSON.stringify({
-        price: productId,
-        quantity: interval === "year" ? 1 : 1,
-      } as any),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const checkoutSession = await res.json().then((value) => {
-      return value.session;
-    });
-    const stripe = await getStripe();
-    const { error } = await stripe!.redirectToCheckout({
-      sessionId: checkoutSession.id,
-    });
+    try {
+      if (!session) {
+        throw new Error("You must be signed in to purchase a subscription");
+      }
+      const res = await fetch("/api/stripe/checkout-session", {
+        method: "POST",
+        body: JSON.stringify({
+          price: productId,
+          quantity: interval === "year" ? 1 : 1,
+        } as any),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const checkoutSession = await res.json().then((value) => {
+        return value.session;
+      });
+
+      const stripe = await getStripe();
+      const { error } = await stripe!.redirectToCheckout({
+        sessionId: checkoutSession.id,
+      });
+    } catch (error: any) {
+      setError(error.message);
+    }
   };
+
   return (
     <div className="mt-6 md:col-6 lg:col-4">
       <div className="rounded-2xl  bg-theme-light">

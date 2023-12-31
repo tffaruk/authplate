@@ -1,10 +1,12 @@
 import RegisterForm from "@/components/Form/RegistrationForm";
 import FormContainer from "@/components/FormContainer";
+import Provider from "@/components/Provider";
+import { getProviders } from "next-auth/react";
 import Link from "next/link";
 
 const SignUp = async () => {
-  // const provider = await getProviders();
-  // const authProviders = Object?.values(provider!);
+  const provider = await getProviders();
+  const authProviders = Object?.values(provider!);
   return (
     <FormContainer>
       <div className="text-center mb-12">
@@ -22,12 +24,12 @@ const SignUp = async () => {
           Or Continue With
         </span>
       </div>
-      {/* {authProviders.map(
+      {authProviders.map(
         (provider) =>
           provider.type != "credentials" && (
             <Provider key={provider.id} provider={provider} />
           ),
-      )} */}
+      )}
     </FormContainer>
   );
 };
